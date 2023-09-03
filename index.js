@@ -31,18 +31,18 @@ async function fetchAndShowResult(url) {
 
 // Create movie card html template
 function createMovieCard(movie) {
-  const { posterPath, originalTitle, releaseDate, overview } = movie;
-  const imagePath = posterPath ? imgApi + posterPath : "./img-01.jpeg";
+  const { poster_path, original_title, release_date, overview } = movie;
+  const imagePath = poster_path ? imgApi + poster_path : "./img-01.jpeg";
   const trunvatedTitle =
-    originalTitle.length > 15
-      ? originalTitle.slice(0, 15) + "..."
-      : originalTitle;
-  const formattedDate = releaseDate || "No release date";
+    original_title.length > 15
+      ? original_title.slice(0, 15) + "..."
+      : original_title;
+  const formattedDate = release_date || "No release date";
   const cardTemplate = `
     <div class="column">
         <div class="card">
             <a class="card-media" href="./img-01.jpeg">
-                <img src="${imagePath}" alt="${originalTitle}" width="100%"/>
+                <img src="${imagePath}" alt="${original_title}" width="100%"/>
             </a>
             <div class="card-content">
                 <div class="card-header">
@@ -65,3 +65,63 @@ function createMovieCard(movie) {
   `;
   return cardTemplate;
 }
+
+// Clear result element for search
+function clearResults() {
+  result.innerHTML = "";
+}
+
+// Show results in page
+function showResults(item) {
+  const newContent = item.map(createMovieCard).join("");
+  result.innerHTML = newContent || "<p>No results found.</p>";
+}
+
+// Load more results
+async function loadMoreResults() {
+  if (isSearching) {
+    return;
+  }
+  page++;
+  const searchTerm = query.ariaValueMax;
+  const url = searchTerm
+    ? `${searchUrl}${searchTerm}&page=${page}`
+    : `https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=${apiKey}&page=${page}`;
+  await fetchAndShowResult(url);
+}
+
+// Detect end of page and load more results
+function detectEnd() {
+  const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
+  if (scrollTop + clientHeight >= scrollHeight - 20) {
+    loadMoreResults();
+  }
+}
+
+// Handle search
+async function handleSearch(e) {
+  e.preventDefault();
+  const searchTerm = query.value.trim();
+  if (searchTerm) {
+    isSearching = true;
+    clearResults();
+    const newUrl = `${searchUrl}${searchTerm}&page=${page}`;
+    await fetchAndShowResult(newUrl);
+    query.value = "";
+  }
+}
+
+//Event listeners
+form.addEventListener("submit", handleSearch);
+window.addEventListener("scroll", detectEnd);
+window.addEventListener("resize", detectEnd);
+
+// Initialize the page
+async function init() {
+  clearResults();
+  const url = `https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=${apiKey}&page=${page}`;
+  isSearching = false;
+  await fetchAndShowResult(url);
+}
+
+init();
