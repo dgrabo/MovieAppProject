@@ -74,7 +74,7 @@ function clearResults() {
 // Show results in page
 function showResults(item) {
   const newContent = item.map(createMovieCard).join("");
-  result.innerHTML = newContent || "<p>No results found.</p>";
+  result.innerHTML += newContent || "<p>No results found.</p>";
 }
 
 // Load more results
