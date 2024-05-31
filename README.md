@@ -2,6 +2,11 @@
 
  In this project, I developed a user-friendly Movie Search App utilizing TheMovieDB API to fetch and display detailed movie information.
 
+## Technology used
+
+1. HTML
+2. CSS
+3. JavaScript
 ## Running Locally
 
 To run the project locally, open a new empty folder in Visual Studio Code and type the following command in the terminal: 
