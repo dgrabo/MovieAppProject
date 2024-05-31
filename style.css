@@ -137,6 +137,7 @@ body {
 
 #result {
   display: flex;
+  margin-top: 10px;
   max-width: 1200px;
   gap: 15px;
   flex-direction: row;
